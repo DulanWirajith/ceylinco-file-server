@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,7 +20,6 @@ import { UpdateFileUploadDto } from './dto/update-file-upload.dto';
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('/file/:caseId')
   @UseInterceptors(
     FileInterceptor('file', {
