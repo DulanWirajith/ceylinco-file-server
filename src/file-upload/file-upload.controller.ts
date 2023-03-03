@@ -45,11 +45,11 @@ export class FileUploadController {
         // },
 
         destination(req, file, cb) {
-          const dir = `./../../../uploads/${req.params.caseId}`;
+          const dir = `./../uploads/${req.params.caseId}`;
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
           }
-          cb(null, `./../../../uploads/${req.params.caseId}`);
+          cb(null, `./../uploads/${req.params.caseId}`);
         },
         filename: (req, file, callback) => {
           const uniqueSuffix = `${Date.now()}-${Math.round(
