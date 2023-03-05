@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Patch,
   Post,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,8 +15,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as fs from 'fs';
+import { createReadStream } from 'fs';
 import { FileUploadService } from './file-upload.service';
 import { UpdateFileUploadDto } from './dto/update-file-upload.dto';
+import { join } from 'path';
 
 @Controller('file-upload')
 export class FileUploadController {
@@ -48,6 +52,19 @@ export class FileUploadController {
     };
   }
 
+  @Get('/file-retrieve/:fileId')
+  @Header('Content-Type', 'application/json')
+  @Header('Content-Disposition', 'attachment; filename="package.json"')
+  getStaticFile(@Param('fileId') id: string): StreamableFile {
+    console.log('in file retrieve');
+    const file = createReadStream(
+      join(
+        process.cwd(),
+        `./../uploads/virtual-assessor/2023/3c14ff78-f87f-4663-a2c7-69619915fcc2/${id}`,
+      ),
+    );
+    return new StreamableFile(file);
+  }
   @Get()
   findAll() {
     return this.fileUploadService.findAll();
