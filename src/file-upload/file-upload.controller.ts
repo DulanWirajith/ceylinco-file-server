@@ -46,24 +46,25 @@ export class FileUploadController {
       }),
     }),
   )
-  handleUpload(@UploadedFile() file: Express.Multer.File, @Body() body) {
-    return {
+  handleUpload(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('projectName') projectName: string,
+    @Param('year') year: string,
+    @Param('uniqueId') uniqueId: string,
+  ) {
+    return this.fileUploadService.storeFileDetailsInDB(
       file,
-    };
+      projectName,
+      year,
+      uniqueId,
+    );
   }
 
   @Get('/file-retrieve/:fileId')
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="package.json"')
-  getStaticFile(@Param('fileId') id: string): StreamableFile {
-    console.log('in file retrieve');
-    const file = createReadStream(
-      join(
-        process.cwd(),
-        `./../uploads/virtual-assessor/2023/3c14ff78-f87f-4663-a2c7-69619915fcc2/${id}`,
-      ),
-    );
-    return new StreamableFile(file);
+  getStaticFile(@Param('fileId') id: string): Promise<StreamableFile> {
+    return this.fileUploadService.fileRetrieve(id);
   }
   @Get()
   findAll() {
