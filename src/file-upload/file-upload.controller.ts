@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Res,
   StreamableFile,
   UploadedFile,
   UseInterceptors,
@@ -19,6 +20,7 @@ import { createReadStream } from 'fs';
 import { FileUploadService } from './file-upload.service';
 import { UpdateFileUploadDto } from './dto/update-file-upload.dto';
 import { join } from 'path';
+import { Response } from 'express';
 
 @Controller('file-upload')
 export class FileUploadController {
@@ -66,26 +68,31 @@ export class FileUploadController {
   getStaticFile(@Param('fileId') id: string): Promise<StreamableFile> {
     return this.fileUploadService.fileRetrieve(id);
   }
-  @Get()
-  findAll() {
-    return this.fileUploadService.findAll();
+
+  @Get('/download-image')
+  downloadImage() {
+    return this.fileUploadService.downloadImage();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileUploadService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateFileUploadDto: UpdateFileUploadDto,
+  @Get('buffer-image/:fileId')
+  async bufferImage(
+    @Param('fileId') fileId: string,
+    @Res() response: Response,
   ) {
-    return this.fileUploadService.update(+id, updateFileUploadDto);
+    const file = await this.fileUploadService.readImageOrVideo(fileId);
+    response.contentType('image/png');
+    response.attachment();
+    response.send(file);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileUploadService.remove(+id);
+  @Get('buffer-video/:fileId')
+  async bufferVideo(
+    @Param('fileId') fileId: string,
+    @Res() response: Response,
+  ) {
+    const file = await this.fileUploadService.readImageOrVideo(fileId);
+    response.contentType('video/mp4');
+    response.attachment();
+    response.send(file);
   }
 }
