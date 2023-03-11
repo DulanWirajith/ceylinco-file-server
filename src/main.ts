@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
-  const app: any = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
 
   // =>  FOR ENABLE CORS
   app.enableCors({
@@ -16,8 +16,7 @@ async function bootstrap() {
     ],
     credentials: true,
   });
-
-  app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/public' });
+  app.use('/uploads', express.static('../dist'));
 
   await app.listen(3000);
 }
