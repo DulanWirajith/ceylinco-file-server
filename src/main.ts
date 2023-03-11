@@ -3,7 +3,8 @@ import { AppModule } from './app.module';
 import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app: any = await NestFactory.create(AppModule);
+
   // =>  FOR ENABLE CORS
   app.enableCors({
     allowedHeaders: ['content-type', 'authorization'],
@@ -15,6 +16,9 @@ async function bootstrap() {
     ],
     credentials: true,
   });
+
+  app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/public' });
+
   await app.listen(3000);
 }
 bootstrap();
