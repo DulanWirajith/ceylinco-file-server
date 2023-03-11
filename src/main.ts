@@ -16,7 +16,6 @@ async function bootstrap() {
     ],
     credentials: true,
   });
-  app.use('/uploads', express.static('../dist'));
 
   await app.listen(3000);
 }
